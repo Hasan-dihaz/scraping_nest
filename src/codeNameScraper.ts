@@ -71,27 +71,26 @@ export default class PageService {
             // );
             // =========================
 
-            dataObj['bookPrice'] = await newPage.$$eval(
-              'table#company',
-              async (text) => {
-                console.log('text', text[1]);
-                // const element = text[1];
+            // dataObj['bookPrice'] = await newPage.$$eval(
+            //   'table#company',
+            //   async (text) => {
+            //     console.log('text', text[1]);
+            //     // const element = text[1];
 
-                // const element =
-                //   text[1].querySelector('tbody > tr').nextElementSibling
-                //     .nextElementSibling.nextElementSibling.nextElementSibling
-                //     .nextElementSibling.nextElementSibling;
+            //     const element =
+            //       text[1].querySelector('tbody > tr').nextElementSibling
+            //         .nextElementSibling.nextElementSibling.nextElementSibling
+            //         .nextElementSibling.nextElementSibling;
 
-                // await page.$x(
-                //   '//*[@id="content"]/div/section[1]/div/div/div[1]/div/h1',
-                // );
+            //     console.log(
+            //       'element',
+            //       element.querySelector('th').nextElementSibling,
+            //     );
+            //   },
+            // );
 
-                // console.log(
-                //   'text',
-                //   await element),
-                // );
-              },
-            );
+            //!==============
+
             resolve(dataObj);
             // await newPage.close();
           });
