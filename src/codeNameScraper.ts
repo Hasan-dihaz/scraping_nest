@@ -71,23 +71,27 @@ export default class PageService {
             // );
             // =========================
 
-            // dataObj['bookPrice'] = await newPage.$$eval(
-            //   'table#company',
-            //   async (text) => {
-            //     console.log('text', text[1]);
-            //     // const element = text[1];
+            dataObj['Market Capitalization (mn)'] = await newPage.$$eval(
+              'table#company',
+              async (text) => {
+                console.log('text', text[1]);
+                // const element = text[1];
 
-            //     const element =
-            //       text[1].querySelector('tbody > tr').nextElementSibling
-            //         .nextElementSibling.nextElementSibling.nextElementSibling
-            //         .nextElementSibling.nextElementSibling;
+                const element =
+                  text[1].querySelector('tbody > tr').nextElementSibling
+                    .nextElementSibling.nextElementSibling.nextElementSibling
+                    .nextElementSibling.nextElementSibling;
 
-            //     console.log(
-            //       'element',
-            //       element.querySelector('th').nextElementSibling,
-            //     );
-            //   },
-            // );
+                // dataObj['Market Capitalization (mn)'] =
+                return element.querySelector('td').nextElementSibling
+                  .nextElementSibling.textContent;
+
+                // console.log(
+                //   'element',
+
+                // );
+              },
+            );
 
             //!==============
 
