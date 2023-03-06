@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { table } from 'console';
 
 @Injectable()
 export default class PageService {
@@ -46,7 +47,7 @@ export default class PageService {
         let link = '';
         const pagePromise = (code) =>
           new Promise(async (resolve, reject) => {
-            const dataObj = {};
+            let dataObj = {};
             const newPage = await browser.newPage();
             // console.log("code", code);
             link = `https://www.dsebd.org/displayCompany.php?name=${code}`;
@@ -71,26 +72,133 @@ export default class PageService {
             // );
             // =========================
 
-            dataObj['Market Capitalization (mn)'] = await newPage.$$eval(
-              'table#company',
-              async (text) => {
-                console.log('text', text[1]);
-                // const element = text[1];
+            // dataObj['Market Capitalization (mn)'] = await newPage.$$eval(
+            //   'table#company',
+            //   async (table) => {
+            //     const element =
+            //       table[1].querySelector('tbody > tr').nextElementSibling
+            //         .nextElementSibling.nextElementSibling.nextElementSibling
+            //         .nextElementSibling.nextElementSibling;
 
-                const element =
-                  text[1].querySelector('tbody > tr').nextElementSibling
+            //     return element.querySelector('td').nextElementSibling
+            //       .nextElementSibling.textContent;
+            //   },
+            // );
+
+            //!===============
+            dataObj = await newPage.$$eval(
+              'table#company',
+              async (table, obj) => {
+                //---------------table-1----------------
+                let baseElement =
+                  table[1].querySelector('tbody > tr').nextElementSibling
                     .nextElementSibling.nextElementSibling.nextElementSibling
                     .nextElementSibling.nextElementSibling;
 
-                // dataObj['Market Capitalization (mn)'] =
-                return element.querySelector('td').nextElementSibling
-                  .nextElementSibling.textContent;
+                obj[
+                  baseElement.querySelector('td').nextElementSibling.textContent
+                ] =
+                  baseElement.querySelector(
+                    'td',
+                  ).nextElementSibling.nextElementSibling.textContent;
 
-                // console.log(
-                //   'element',
+                //---------------table-2----------------
 
-                // );
+                baseElement = table[2].querySelector('tbody > tr');
+
+                obj[baseElement.querySelector('th').textContent] =
+                  baseElement.querySelector('td').textContent;
+
+                obj[
+                  baseElement.nextElementSibling.querySelector('th').textContent
+                ] =
+                  baseElement.nextElementSibling.querySelector(
+                    'td',
+                  ).textContent;
+
+                obj[
+                  baseElement.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.textContent
+                ] =
+                  baseElement.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.nextElementSibling.textContent;
+
+                obj[
+                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
+                    'th',
+                  ).textContent
+                ] =
+                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
+                    'td',
+                  ).textContent;
+
+                obj[
+                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.textContent
+                ] =
+                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.nextElementSibling.textContent;
+
+                //---------------table-3----------------
+                baseElement = table[3].querySelector('tbody > tr');
+
+                obj[baseElement.querySelector('th').textContent] =
+                  baseElement.querySelector('td').textContent;
+
+                obj[
+                  baseElement.nextElementSibling.querySelector('th').textContent
+                ] =
+                  baseElement.nextElementSibling.querySelector(
+                    'td',
+                  ).textContent;
+
+                //---------------table-10----------------
+                baseElement = table[10].querySelector('tbody > tr');
+
+                obj[baseElement.querySelector('td').textContent] =
+                  baseElement.querySelector(
+                    'td',
+                  ).nextElementSibling.textContent;
+
+                obj[
+                  baseElement.nextElementSibling.querySelector('td').textContent
+                ] =
+                  baseElement.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.textContent;
+
+                //-----------------------------Shareholding pattern--------------------------
+                const text =
+                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling
+                    .querySelector('td')
+                    .nextElementSibling.querySelector('table > tbody > tr');
+
+                const textArray = text.textContent
+                  .replace(/\s+/g, ' ')
+                  .trim()
+                  .split(' ');
+
+                obj[textArray[0]] = textArray[1];
+                obj[textArray[2]] = textArray[3];
+                obj[textArray[4]] = textArray[5];
+                obj[textArray[6]] = textArray[7];
+                obj[textArray[8]] = textArray[9];
+                //---------------Shareholding Pattern----------------------
+
+                //---------------------table-12-------------------
+                baseElement = table[12].querySelector('tbody > tr');
+                console.log(
+                  'baseElement',
+                  baseElement.textContent.replace(/\s+/g, ' '),
+                );
+
+                return obj;
               },
+              dataObj,
             );
 
             //!==============
