@@ -53,7 +53,7 @@ export default class PageService {
             link = `https://www.dsebd.org/displayCompany.php?name=${code}`;
             await newPage.goto(link);
             // await newPage.waitForSelector('h2.BodyHead.topBodyHead');
-            dataObj['Name'] = await newPage.$eval(
+            dataObj['name'] = await newPage.$eval(
               'div#section-to-print > h2 > i',
               (text) => text.textContent,
             );
@@ -89,111 +89,114 @@ export default class PageService {
             dataObj = await newPage.$$eval(
               'table#company',
               async (table, obj) => {
-                //---------------table-1----------------
+                //---------------table-1-Market Information---------------
                 let baseElement =
                   table[1].querySelector('tbody > tr').nextElementSibling
                     .nextElementSibling.nextElementSibling.nextElementSibling
                     .nextElementSibling.nextElementSibling;
 
-                obj[
-                  baseElement.querySelector('td').nextElementSibling.textContent
-                ] =
+                obj['market_capitalization_mn'] =
                   baseElement.querySelector(
                     'td',
                   ).nextElementSibling.nextElementSibling.textContent;
 
-                //---------------table-2----------------
+                //---------------table-2-Basic Information---------------
 
                 baseElement = table[2].querySelector('tbody > tr');
 
-                obj[baseElement.querySelector('th').textContent] =
+                obj['authorized_capital_mn'] =
                   baseElement.querySelector('td').textContent;
 
-                obj[
-                  baseElement.nextElementSibling.querySelector('th').textContent
-                ] =
+                obj['paidup_capital_mn'] =
                   baseElement.nextElementSibling.querySelector(
                     'td',
                   ).textContent;
 
-                obj[
-                  baseElement.nextElementSibling.querySelector(
-                    'td',
-                  ).nextElementSibling.textContent
-                ] =
+                obj['type_of_instrument'] =
                   baseElement.nextElementSibling.querySelector(
                     'td',
                   ).nextElementSibling.nextElementSibling.textContent;
 
-                obj[
-                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
-                    'th',
-                  ).textContent
-                ] =
+                obj['total_outstanding_share'] =
                   baseElement.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
                     'td',
                   ).textContent;
 
-                obj[
-                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
+                obj['face_par_value'] =
+                  baseElement.nextElementSibling.nextElementSibling.querySelector(
                     'td',
-                  ).nextElementSibling.textContent
-                ] =
+                  ).textContent;
+
+                obj['sector'] =
                   baseElement.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
                     'td',
                   ).nextElementSibling.nextElementSibling.textContent;
 
-                //---------------table-3----------------
+                //---------------table-3-Last AGM---------------
+
                 baseElement = table[3].querySelector('tbody > tr');
 
-                obj[baseElement.querySelector('th').textContent] =
+                obj['cash_dividend'] =
                   baseElement.querySelector('td').textContent;
 
-                obj[
-                  baseElement.nextElementSibling.querySelector('th').textContent
-                ] =
+                obj['bonus_issued_stock_dividend'] =
                   baseElement.nextElementSibling.querySelector(
                     'td',
                   ).textContent;
 
-                //---------------table-10----------------
+                //---------------table-10-Other Information of the Company---------------
                 baseElement = table[10].querySelector('tbody > tr');
 
-                obj[baseElement.querySelector('td').textContent] =
+                obj['listing_since'] =
                   baseElement.querySelector(
                     'td',
                   ).nextElementSibling.textContent;
 
-                obj[
-                  baseElement.nextElementSibling.querySelector('td').textContent
-                ] =
+                obj['category'] =
                   baseElement.nextElementSibling.querySelector(
                     'td',
                   ).nextElementSibling.textContent;
 
                 //-----------------------------Shareholding pattern--------------------------
-                const text =
+                const Shareholding =
                   baseElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling
                     .querySelector('td')
                     .nextElementSibling.querySelector('table > tbody > tr');
 
-                const textArray = text.textContent
+                const ShareholdingArray = Shareholding.textContent
                   .replace(/\s+/g, ' ')
                   .trim()
                   .split(' ');
 
-                obj[textArray[0]] = textArray[1];
-                obj[textArray[2]] = textArray[3];
-                obj[textArray[4]] = textArray[5];
-                obj[textArray[6]] = textArray[7];
-                obj[textArray[8]] = textArray[9];
+                obj['ponsor_director'] = ShareholdingArray[1];
+                obj['govt'] = ShareholdingArray[3];
+                obj['institute'] = ShareholdingArray[5];
+                obj['foreign'] = ShareholdingArray[7];
+                obj['public'] = ShareholdingArray[9];
                 //---------------Shareholding Pattern----------------------
 
-                //---------------------table-12-------------------
+                //---------------------table-12-Address of the Company------------------
                 baseElement = table[12].querySelector('tbody > tr');
+
+                const addressArray = baseElement.textContent.trim().split('\n');
+
+                obj['address'] = addressArray[2].replace(/\s+/g, ' ');
+
+                obj['phone'] =
+                  baseElement.nextElementSibling.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.textContent;
+
+                obj['email'] =
+                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.textContent;
+
                 console.log(
-                  'baseElement',
-                  baseElement.textContent.replace(/\s+/g, ' '),
+                  "baseElement.nextElementSibling.querySelector('td').textContent",
+                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.textContent,
                 );
 
                 return obj;
