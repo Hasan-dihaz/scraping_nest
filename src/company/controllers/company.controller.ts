@@ -1,23 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
-// import { AppService } from './app.service';
-// import Index from './index';
+import { CompanyService } from '../services//company.service';
+import { Company } from '../entities/company.entity';
 
-// ========================
-import { CompanyService } from './company/services/company.service';
-import { Company } from './company/entities/company.entity';
-
-// @Controller()
-// export class AppController {
-//   constructor(private readonly index: Index) {}
-
-//   @Get()
-//   getHello(): Promise<void> {
-//     return this.index.func();
-//   }
-// }
-
-@Controller()
-export class AppController {
+@Controller('/')
+export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
   @Get()

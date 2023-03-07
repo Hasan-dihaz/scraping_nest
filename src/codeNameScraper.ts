@@ -86,6 +86,12 @@ export default class PageService {
             // );
 
             //!===============
+
+            dataObj['last_agm'] = await newPage.$eval(
+              'div.col-sm-6.pull-left > i',
+              (text) => text.textContent,
+            );
+
             dataObj = await newPage.$$eval(
               'table#company',
               async (table, obj) => {
@@ -143,6 +149,21 @@ export default class PageService {
                   baseElement.nextElementSibling.querySelector(
                     'td',
                   ).textContent;
+                //---------------table-6-Price Earnings (P/E) Ratio Based on latest Audited Financial Statements---------------
+
+                baseElement = table[6].querySelector('tbody > tr');
+                obj['pe'] =
+                  baseElement.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.textContent;
+
+                //---------------table-7-Price Earnings (P/E) Ratio Based on latest Audited Financial Statements---------------
+
+                baseElement = table[7].querySelector('tbody > tr');
+                obj['eps'] =
+                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.textContent;
 
                 //---------------table-10-Other Information of the Company---------------
                 baseElement = table[10].querySelector('tbody > tr');
@@ -162,7 +183,6 @@ export default class PageService {
                   baseElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling
                     .querySelector('td')
                     .nextElementSibling.querySelector('table > tbody > tr');
-
                 const ShareholdingArray = Shareholding.textContent
                   .replace(/\s+/g, ' ')
                   .trim()
@@ -204,6 +224,9 @@ export default class PageService {
               dataObj,
             );
 
+            const date = new Date();
+            console.log('date', date);
+
             //!==============
 
             resolve(dataObj);
@@ -222,11 +245,11 @@ export default class PageService {
           // console.log("companies[link]", companies[link].Code);
           const currentPageData = await pagePromise(companies[link].Code);
           scrapedData.push(currentPageData);
-          console.log(currentPageData);
+          // console.log(currentPageData);
         }
       }
       const data = await scrapeCurrentPage();
-      // console.log("data...",data);
+      // console.log('data...', data);
       return data;
     },
   };
