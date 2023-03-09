@@ -1,9 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CompanyController } from '../company/controllers/company.controller';
+import Index from './services/index';
+// import { CompanyController } from '../company/controllers/company.controller';
 import { CompanyService } from '../company/services/company.service';
 // import { CompanyRepository } from './user.repository';
 import { Company } from './entities/company.entity';
+import PageScraper from './services/codeNameScraper';
+
+// ===========================
+import ScraperController from './handler/pageController';
 
 @Module({
   imports: [
@@ -20,9 +25,9 @@ import { Company } from './entities/company.entity';
     // TypeOrmModule.forFeature([UserRepository]),
     TypeOrmModule.forFeature([Company]),
   ],
-  controllers: [CompanyController],
-  // controllers: [],
-  providers: [CompanyService],
+  // controllers: [CompanyController],
+  controllers: [],
+  providers: [CompanyService, ScraperController, PageScraper],
   // exports: [CompanyService],
 })
 export default class CompanyModule {}

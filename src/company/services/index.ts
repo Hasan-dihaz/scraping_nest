@@ -1,6 +1,6 @@
 import BrowserObject from './browser';
 import { Injectable, Inject } from '@nestjs/common';
-import ScraperController from './pageController';
+import ScraperController from '../handler/pageController';
 
 @Injectable()
 export default class IndexProvider {

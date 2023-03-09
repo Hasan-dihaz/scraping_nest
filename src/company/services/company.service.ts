@@ -13,7 +13,11 @@ export class CompanyService {
   ) {}
 
   async createCompany(createCompanyDto: CreateCompanyDto): Promise<Company> {
+    // async createCompany(createCompanyDto: any): Promise<Company> {
+    // console.log('createCompany', createCompanyDto);
+
     const {
+      code,
       name,
       last_agm,
       market_capitalization_mn,
@@ -41,6 +45,7 @@ export class CompanyService {
 
     const company = new Company();
 
+    company.code = code;
     company.name = name;
     company.last_agm = last_agm;
     company.market_capitalization_mn = market_capitalization_mn;

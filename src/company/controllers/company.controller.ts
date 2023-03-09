@@ -11,7 +11,7 @@ export class CompanyController {
     console.log('Controller');
 
     return this.companyService.createCompany({
-      id: 1,
+      // id: 1,
       code: ' ',
       name: 'Zahid Hasan',
       last_agm: ' ',

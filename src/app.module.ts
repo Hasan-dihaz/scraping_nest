@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import Index from './index';
-import Browser from './browser';
-import PageController from './pageController';
-import CodeNameScrap from './codeNameScraper';
+import Index from './company/services/index';
+import Browser from './company/services/browser';
+import PageController from './company/handler/pageController';
+import CodeNameScrap from './company/services/codeNameScraper';
 import CompanyModule from './company/company.module';
 // import { CompanyController } from './company/controllers/company.controller';
 
