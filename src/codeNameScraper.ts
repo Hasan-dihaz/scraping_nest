@@ -92,7 +92,7 @@ export default class PageService {
             //!==============
 
             resolve(dataObj);
-            // await newPage.close();
+            await newPage.close();
           });
         const compa = ['AAMRANET', 'AAMRATECH', 'ABB1STMF'];
 
