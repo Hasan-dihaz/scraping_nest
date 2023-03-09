@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { table } from 'console';
 
 @Injectable()
 export default class PageService {
@@ -46,13 +47,13 @@ export default class PageService {
         let link = '';
         const pagePromise = (code) =>
           new Promise(async (resolve, reject) => {
-            const dataObj = {};
+            let dataObj = {};
             const newPage = await browser.newPage();
             // console.log("code", code);
             link = `https://www.dsebd.org/displayCompany.php?name=${code}`;
             await newPage.goto(link);
             // await newPage.waitForSelector('h2.BodyHead.topBodyHead');
-            dataObj['Name'] = await newPage.$eval(
+            dataObj['name'] = await newPage.$eval(
               'div#section-to-print > h2 > i',
               (text) => text.textContent,
             );
@@ -71,23 +72,160 @@ export default class PageService {
             // );
             // =========================
 
-            // dataObj['bookPrice'] = await newPage.$$eval(
+            // dataObj['Market Capitalization (mn)'] = await newPage.$$eval(
             //   'table#company',
-            //   async (text) => {
-            //     console.log('text', text[1]);
-            //     // const element = text[1];
-
+            //   async (table) => {
             //     const element =
-            //       text[1].querySelector('tbody > tr').nextElementSibling
+            //       table[1].querySelector('tbody > tr').nextElementSibling
             //         .nextElementSibling.nextElementSibling.nextElementSibling
             //         .nextElementSibling.nextElementSibling;
 
-            //     console.log(
-            //       'element',
-            //       element.querySelector('th').nextElementSibling,
-            //     );
+            //     return element.querySelector('td').nextElementSibling
+            //       .nextElementSibling.textContent;
             //   },
             // );
+
+            //!===============
+
+            dataObj['last_agm'] = await newPage.$eval(
+              'div.col-sm-6.pull-left > i',
+              (text) => text.textContent,
+            );
+
+            dataObj = await newPage.$$eval(
+              'table#company',
+              async (table, obj) => {
+                //---------------table-1-Market Information---------------
+                let baseElement =
+                  table[1].querySelector('tbody > tr').nextElementSibling
+                    .nextElementSibling.nextElementSibling.nextElementSibling
+                    .nextElementSibling.nextElementSibling;
+
+                obj['market_capitalization_mn'] =
+                  baseElement.querySelector(
+                    'td',
+                  ).nextElementSibling.nextElementSibling.textContent;
+
+                //---------------table-2-Basic Information---------------
+
+                baseElement = table[2].querySelector('tbody > tr');
+
+                obj['authorized_capital_mn'] =
+                  baseElement.querySelector('td').textContent;
+
+                obj['paidup_capital_mn'] =
+                  baseElement.nextElementSibling.querySelector(
+                    'td',
+                  ).textContent;
+
+                obj['type_of_instrument'] =
+                  baseElement.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.nextElementSibling.textContent;
+
+                obj['total_outstanding_share'] =
+                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
+                    'td',
+                  ).textContent;
+
+                obj['face_par_value'] =
+                  baseElement.nextElementSibling.nextElementSibling.querySelector(
+                    'td',
+                  ).textContent;
+
+                obj['sector'] =
+                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.nextElementSibling.textContent;
+
+                //---------------table-3-Last AGM---------------
+
+                baseElement = table[3].querySelector('tbody > tr');
+
+                obj['cash_dividend'] =
+                  baseElement.querySelector('td').textContent;
+
+                obj['bonus_issued_stock_dividend'] =
+                  baseElement.nextElementSibling.querySelector(
+                    'td',
+                  ).textContent;
+                //---------------table-6-Price Earnings (P/E) Ratio Based on latest Audited Financial Statements---------------
+
+                baseElement = table[6].querySelector('tbody > tr');
+                obj['pe'] =
+                  baseElement.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.textContent;
+
+                //---------------table-7-Price Earnings (P/E) Ratio Based on latest Audited Financial Statements---------------
+
+                baseElement = table[7].querySelector('tbody > tr');
+                obj['eps'] =
+                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.textContent;
+
+                //---------------table-10-Other Information of the Company---------------
+                baseElement = table[10].querySelector('tbody > tr');
+
+                obj['listing_since'] =
+                  baseElement.querySelector(
+                    'td',
+                  ).nextElementSibling.textContent;
+
+                obj['category'] =
+                  baseElement.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.textContent;
+
+                //-----------------------------Shareholding pattern--------------------------
+                const Shareholding =
+                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling
+                    .querySelector('td')
+                    .nextElementSibling.querySelector('table > tbody > tr');
+                const ShareholdingArray = Shareholding.textContent
+                  .replace(/\s+/g, ' ')
+                  .trim()
+                  .split(' ');
+
+                obj['ponsor_director'] = ShareholdingArray[1];
+                obj['govt'] = ShareholdingArray[3];
+                obj['institute'] = ShareholdingArray[5];
+                obj['foreign'] = ShareholdingArray[7];
+                obj['public'] = ShareholdingArray[9];
+                //---------------Shareholding Pattern----------------------
+
+                //---------------------table-12-Address of the Company------------------
+                baseElement = table[12].querySelector('tbody > tr');
+
+                const addressArray = baseElement.textContent.trim().split('\n');
+
+                obj['address'] = addressArray[2].replace(/\s+/g, ' ');
+
+                obj['phone'] =
+                  baseElement.nextElementSibling.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.textContent;
+
+                obj['email'] =
+                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.textContent;
+
+                console.log(
+                  "baseElement.nextElementSibling.querySelector('td').textContent",
+                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
+                    'td',
+                  ).nextElementSibling.textContent,
+                );
+
+                return obj;
+              },
+              dataObj,
+            );
+
+            const date = new Date();
+            console.log('date', date);
 
             //!==============
 
@@ -107,11 +245,11 @@ export default class PageService {
           // console.log("companies[link]", companies[link].Code);
           const currentPageData = await pagePromise(companies[link].Code);
           scrapedData.push(currentPageData);
-          console.log(currentPageData);
+          // console.log(currentPageData);
         }
       }
       const data = await scrapeCurrentPage();
-      // console.log("data...",data);
+      // console.log('data...', data);
       return data;
     },
   };
