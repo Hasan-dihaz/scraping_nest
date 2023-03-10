@@ -1,28 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import Index from './company/services/index';
-import Browser from './company/services/browser';
-import PageController from './company/handler/pageController';
-import CodeNameScrap from './company/services/codeNameScraper';
 import CompanyModule from './company/company.module';
-// import { CompanyController } from './company/controllers/company.controller';
-
-// =================
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Company } from './company/entities/company.entity';
-import { CompanyService } from './company/services/company.service';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [CompanyModule, TypeOrmModule.forFeature([Company])],
+  imports: [CompanyModule, ScheduleModule.forRoot()],
   controllers: [AppController],
-  providers: [
-    AppService,
-    Index,
-    CodeNameScrap,
-    PageController,
-    Browser,
-    CompanyService,
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 // import { AppService } from './app.service';
-import Index from './company/services/index';
+// import Index from './company/services/index';
 
 // ========================
 // import { CompanyService } from './company/services/company.service';
@@ -8,11 +8,11 @@ import Index from './company/services/index';
 
 @Controller()
 export class AppController {
-  constructor(private readonly index: Index) {}
+  // constructor(private readonly index: Index) {}
 
   @Get()
-  getHello(): Promise<void> {
-    return this.index.func();
+  getHello(): void {
+    // return this.index.func();
   }
 }
 

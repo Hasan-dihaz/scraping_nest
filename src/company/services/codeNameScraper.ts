@@ -1,6 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { table } from 'console';
-
+import { Injectable } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from '../dto/company.dto';
 
@@ -26,11 +24,18 @@ export default class PageService {
     const scrapeCurrentPage = async () => {
       await page.waitForSelector('.content');
       const companies = [];
-      for (let id = 65; id <= 90; id++) {
+      for (let id = 65; id <= 91; id++) {
         //for id A-Z
         // console.log("ID", String.fromCharCode(id));
+        let div_ID: string;
+        if (id < 90) {
+          div_ID = String.fromCharCode(id);
+        } else {
+          div_ID = 'Additional';
+        }
+
         const company_code_name = await page.$$eval(
-          `div#${String.fromCharCode(id)} > div.BodyContent > a.ab1`,
+          `div#${div_ID} > div.BodyContent > a.ab1`,
           (company_code_name) => {
             company_code_name = company_code_name.map((el) => {
               return {
@@ -175,18 +180,40 @@ export default class PageService {
                 console.log('bonus_issued_stock_dividend'); //!.............................
                 //---------------table-6-Price Earnings (P/E) Ratio Based on latest Audited Financial Statements---------------
 
-                baseElement = table[6].querySelector('tbody > tr');
-                console.log(
-                  'baseElement',
-                  baseElement.nextElementSibling.querySelector('td')
-                    .nextElementSibling.textContent,
-                ); //!'''''''''''''''''''''''''''''' Working Here'''''''''''''
+                baseElement = table[6]
+                  .querySelector('tbody > tr')
+                  .nextElementSibling.querySelector('td');
+                // console.log(
+                //   'baseElement_______pe',
+                //   baseElement.nextElementSibling,
+                // ); //!'''''''''''''''''''''''''''''' Working Here'''''''''''''''''''''''''
 
-                obj['pe'] =
-                  baseElement.nextElementSibling.querySelector(
-                    'td',
-                  ).nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling;
-                console.log('pe'); //!.............................
+                let round = 0;
+                const row = (base_element) => {
+                  round++;
+                  const year_row = base_element;
+                  if (year_row.nextElementSibling !== null) {
+                    row(year_row.nextElementSibling);
+                  } else {
+                    if (round > 1) {
+                      obj['pe'] = year_row.textContent;
+                      console.log("obj['pe']", obj['pe']);
+                    } else {
+                      obj['pe'] = null;
+                      console.log("obj['pe']", obj['pe']);
+                    }
+                  }
+                };
+
+                row(baseElement);
+
+                // obj['pe'] =
+                //   baseElement.nextElementSibling.querySelector(
+                //     'td',
+                //   ).nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling;
+                // console.log('pe'); //!.............................
+
+                //!'''''''''''''''''''''''''''''' Working Here'''''''''''''
 
                 //---------------table-7-Price Earnings (P/E) Ratio Based on latest Audited Financial Statements---------------
 
@@ -199,22 +226,32 @@ export default class PageService {
                 //   ).nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.textContent;
 
                 //!===================================
-                const year = (base_element) => {
+                let round_1 = 0;
+                const row_year = (base_element) => {
+                  round_1++;
                   const year_row = base_element;
                   if (year_row.nextElementSibling !== null) {
-                    console.log('null.......', year_row.querySelector('td'));
+                    console.log(
+                      'Not null.......',
+                      year_row.querySelector('td'),
+                    );
 
-                    year(year_row.nextElementSibling);
+                    row_year(year_row.nextElementSibling);
                   } else {
-                    obj['eps'] =
-                      year_row.querySelector(
-                        'td',
-                      ).nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.textContent;
-                    console.log("obj['eps']", obj['eps']);
+                    if (round_1 > 1) {
+                      obj['eps'] =
+                        year_row.querySelector(
+                          'td',
+                        ).nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.textContent;
+                      console.log("obj['eps']", obj['eps']);
+                    } else {
+                      obj['eps'] = null;
+                      console.log("obj['eps']", obj['eps']);
+                    }
                   }
                 };
 
-                year(baseElement);
+                row_year(baseElement);
                 // console.log('Year', year.textContent);
 
                 //!============================================
@@ -240,11 +277,35 @@ export default class PageService {
                     'td',
                   ).nextElementSibling.textContent;
 
+                console.log('category'); //!.............................
+
                 //-----------------------------Shareholding pattern--------------------------
-                const Shareholding =
-                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling
-                    .querySelector('td')
-                    .nextElementSibling.querySelector('table > tbody > tr');
+
+                const ShareHolding_row = (base_element) => {
+                  if (
+                    base_element.nextElementSibling.querySelector('td')
+                      .textContent != 'Remarks'
+                  ) {
+                    console.log(
+                      'base_element.nextElementSibling.textContent',
+                      base_element.nextElementSibling.textContent,
+                    );
+
+                    return ShareHolding_row(base_element.nextElementSibling);
+                  } else {
+                    console.log('base_element__return', base_element);
+                    return base_element;
+                  }
+                };
+
+                const Shareholding = ShareHolding_row(
+                  baseElement.nextElementSibling.nextElementSibling,
+                )
+                  .querySelector('td')
+                  .nextElementSibling.querySelector('table > tbody > tr');
+
+                console.log('Shareholding.........', Shareholding);
+
                 const ShareholdingArray = Shareholding.textContent
                   .replace(/\s+/g, ' ')
                   .trim()
@@ -254,34 +315,42 @@ export default class PageService {
                 obj['govt'] = ShareholdingArray[3];
                 obj['institute'] = ShareholdingArray[5];
                 obj['foreign'] = ShareholdingArray[7];
-                obj['public'] = ShareholdingArray[9];
+                obj['_public'] = ShareholdingArray[9];
 
-                console.log('public'); //!.............................
+                console.log('public....'); //!.............................
                 //---------------Shareholding Pattern----------------------
 
                 //---------------------table-12-Address of the Company------------------
                 baseElement = table[12].querySelector('tbody > tr');
 
+                // console.log(
+                //   'baseElement___addressArray',
+                //   baseElement.querySelector('td').nextElementSibling
+                //     .nextElementSibling,
+                // );
+
                 const addressArray = baseElement.textContent.trim().split('\n');
+                console.log('addressArray', addressArray.length); //!.............................
 
-                obj['address'] = addressArray[2].replace(/\s+/g, ' ');
+                if (addressArray.length > 2) {
+                  obj['address'] = addressArray[2].replace(/\s+/g, ' ');
 
-                obj['phone'] =
-                  baseElement.nextElementSibling.nextElementSibling.querySelector(
-                    'td',
-                  ).nextElementSibling.textContent;
+                  console.log('address'); //!.............................
 
-                obj['email'] =
-                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
-                    'td',
-                  ).nextElementSibling.textContent;
+                  obj['phone'] =
+                    baseElement.nextElementSibling.nextElementSibling.querySelector(
+                      'td',
+                    ).nextElementSibling.textContent;
 
-                console.log(
-                  "baseElement.nextElementSibling.querySelector('td').textContent",
-                  baseElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
-                    'td',
-                  ).nextElementSibling.textContent,
-                );
+                  obj['email'] =
+                    baseElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
+                      'td',
+                    ).nextElementSibling.textContent;
+                } else {
+                  obj['address'] = null;
+                  obj['phone'] = null;
+                  obj['email'] = null;
+                }
 
                 return obj;
               },
@@ -289,20 +358,22 @@ export default class PageService {
             );
           } catch {
             this.count += 1;
-            console.log('error........');
+            console.log('error........!!!');
           }
 
           const date = new Date();
+          // dataObj['date'] = date;
+
           console.log('date', date);
 
           //!==============
 
           resolve(dataObj);
-          // await newPage.close();
+          await newPage.close();
         });
 
       // const compa = ['AAMRANET', 'AAMRATECH', 'ACMEPL'];
-      const com = ['ACMEPL', 'AGRANINS', ' SJIBLPBOND'];
+      const com = ['ACMEPL', 'AGRANINS', 'SJIBLPBOND', 'AAMRANET']; //TB10Y0126 TB10Y0126
 
       // compa.map(async(comp)=>{
       // 	// console.log("code", comp.Code);
@@ -311,18 +382,27 @@ export default class PageService {
       // 	console.log(currentPageData);
       // })
 
-      // for (link in companies) {
-      for (link in com) {
+      for (link in companies) {
+        // for (link in com) {
         // let currentPageData: CreateCompanyDto = {};
         let currentPageData = new CreateCompanyDto();
-        // currentPageData = await pagePromise(companies[link].Code);
-        currentPageData = await pagePromise(com[link]);
 
+        const regex = /TB[0-9]+Y[0-9]+/i;
+        const is_true = regex.test(companies[link].Code);
+        // const is_true = regex.test(com[link]);
+        if (is_true) {
+          continue;
+        }
+        currentPageData = await pagePromise(companies[link].Code);
+        // currentPageData = await pagePromise(com[link]);
         // =============================================
 
-        // const result = await this.companyService.createCompany(currentPageData);
+        // const result = await this.companyService.createCompany(currentPageData); // inserting into the database.
+        const result = await this.companyService.upsertCompanyEntity(
+          currentPageData,
+        ); // inserting into the database.
 
-        // console.log('result', result);
+        console.log('result', result);
         console.log('Count', this.count);
 
         // =============================================

@@ -3,12 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import Index from './services/index';
 // import { CompanyController } from '../company/controllers/company.controller';
 import { CompanyService } from '../company/services/company.service';
-// import { CompanyRepository } from './user.repository';
 import { Company } from './entities/company.entity';
 import PageScraper from './services/codeNameScraper';
 
 // ===========================
 import ScraperController from './handler/pageController';
+import Browser from './services/browser';
 
 @Module({
   imports: [
@@ -21,13 +21,13 @@ import ScraperController from './handler/pageController';
       database: 'Name_Nai',
       entities: [Company],
       // synchronize: true,
+      //if enabled every time run the app will try to create table using registerd entity...runs migration automatically
     }),
-    // TypeOrmModule.forFeature([UserRepository]),
-    TypeOrmModule.forFeature([Company]),
+    TypeOrmModule.forFeature([Company]), //to use typeORM Repository on company entity
   ],
   // controllers: [CompanyController],
   controllers: [],
-  providers: [CompanyService, ScraperController, PageScraper],
-  // exports: [CompanyService],
+  providers: [CompanyService, ScraperController, PageScraper, Index, Browser],
+  // exports:[]
 })
 export default class CompanyModule {}

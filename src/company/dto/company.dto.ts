@@ -24,4 +24,5 @@ export class CreateCompanyDto {
   address: string;
   phone: string;
   email: string;
+  // date: Date;
 }

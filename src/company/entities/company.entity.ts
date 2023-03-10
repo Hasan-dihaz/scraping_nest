@@ -1,11 +1,19 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  // PrimaryGeneratedColumn,
+  PrimaryColumn,
+  // Generated,
+  // CreateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Company {
-  @PrimaryGeneratedColumn()
-  id: number;
+  // @PrimaryGeneratedColumn()
+  // id: number;
 
   @Column()
+  @PrimaryColumn()
   code: string;
 
   @Column({ length: 100 })
@@ -41,10 +49,10 @@ export class Company {
   @Column()
   bonus_issued_stock_dividend: string;
 
-  @Column()
+  @Column({ nullable: true })
   pe: string;
 
-  @Column()
+  @Column({ nullable: true })
   eps: string;
 
   @Column()
@@ -56,24 +64,29 @@ export class Company {
   @Column()
   ponsor_director: string;
 
-  @Column()
+  @Column({ nullable: true })
   govt: string;
 
-  @Column()
+  @Column({ nullable: true })
   institute: string;
 
-  @Column()
+  @Column({ nullable: true })
   foreign: string;
 
-  @Column()
+  @Column({ nullable: true })
   public: string;
 
-  @Column()
+  @Column({ nullable: true })
   address: string;
 
-  @Column()
+  @Column({ nullable: true })
   phone: string;
 
-  @Column()
+  @Column({ nullable: true })
   email: string;
+
+  // @Column({ type: 'date' })   // all types are working here
+  // @CreateDateColumn()
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  date: Date;
 }
