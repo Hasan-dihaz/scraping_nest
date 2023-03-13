@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Company } from '../entities/company.entity';
+import { Company } from '../entities/company.entities';
 import { CreateCompanyDto } from '../dto/company.dto';
 
 @Injectable()
@@ -13,8 +13,6 @@ export class CompanyService {
   ) {}
 
   // async createCompany(createCompanyDto: CreateCompanyDto): Promise<Company> {
-  //   // async createCompany(createCompanyDto: any): Promise<Company> {
-  //   // console.log('createCompany', createCompanyDto);
 
   //   const {
   //     code,

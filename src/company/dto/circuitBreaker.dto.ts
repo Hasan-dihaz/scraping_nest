@@ -1,4 +1,4 @@
-export class CreatePeDto {
+export class CreateCircuitBreakerDto {
   code: string;
   breaker: string;
   tickSize: string;

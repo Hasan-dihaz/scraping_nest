@@ -1,14 +1,20 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import Index from './services/index';
+import Index from './index/index';
 // import { CompanyController } from '../company/controllers/company.controller';
 import { CompanyService } from '../company/services/company.service';
-import { Company } from './entities/company.entity';
-import PageScraper from './services/codeNameScraper';
+import { PeService } from '../company/services/pe.service';
+import { CircuitBreakerService } from '../company/services/circuitBreaker.service';
+import { Company } from './entities/company.entities';
+import PageScraper from './scrapers/codeNameScraper';
+import PeScraper from './scrapers/peScrapar';
+import CircuitBreakerScrapper from './scrapers/circuitBreakerScrapper';
 
 // ===========================
-import ScraperController from './handler/pageController';
-import Browser from './services/browser';
+import PageController from './middlewares/page.Controller';
+import PeController from './middlewares/pe.Controller';
+import CircuitBreakerController from './middlewares/circuitBreaker.Controller';
+import Browser from './index/browser';
 import { PE } from './entities/pe.entities';
 import { CircuitBreaker } from './entities/circuitBreaker.entities';
 
@@ -29,7 +35,19 @@ import { CircuitBreaker } from './entities/circuitBreaker.entities';
   ],
   // controllers: [CompanyController],
   controllers: [],
-  providers: [CompanyService, ScraperController, PageScraper, Index, Browser],
+  providers: [
+    CompanyService,
+    PeService,
+    CircuitBreakerService,
+    PageController,
+    PeController,
+    CircuitBreakerController,
+    PageScraper,
+    PeScraper,
+    CircuitBreakerScrapper,
+    Index,
+    Browser,
+  ],
   // exports:[]
 })
 export default class CompanyModule {}

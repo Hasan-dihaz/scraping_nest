@@ -1,4 +1,4 @@
-import PageScraper from '../services/codeNameScraper';
+import PageScraper from '../scrapers/codeNameScraper';
 import { Injectable, Inject } from '@nestjs/common';
 // @Controller()
 @Injectable()
