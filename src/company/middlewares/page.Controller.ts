@@ -1,6 +1,6 @@
-import PageScraper from '../services/codeNameScraper';
+import PageScraper from '../scrapers/codeNameScraper';
 import { Injectable, Inject } from '@nestjs/common';
-// @Controller()
+
 @Injectable()
 export default class PageController {
   constructor(@Inject(PageScraper) private readonly pageScraper: PageScraper) {}
@@ -15,5 +15,3 @@ export default class PageController {
     }
   }
 }
-
-// module.exports = (browserInstance) => scrapeAll(browserInstance);
