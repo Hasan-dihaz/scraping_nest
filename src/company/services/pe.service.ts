@@ -18,7 +18,7 @@ export class PeService {
     // let a = 0;
     for (const createPeDto of createPeDtos) {
       // a++;
-      console.log('createPeDtos...', createPeDto);
+      // console.log('createPeDtos...', createPeDto);
       // if (a == 3) {
       //   break;
       // }
@@ -52,18 +52,36 @@ export class PeService {
         .createQueryBuilder()
         .insert()
         .into(PE)
-        .values(createPeDto)
-        .orUpdate([
-          'close_price',
-          'ycp',
-          'pe_1',
-          'pe_2',
-          'pe_3',
-          'pe_4',
-          'pe_5',
-          'pe_6',
-          'date',
-        ]);
+        .values(pe);
+      // .orUpdate(
+      //   [
+      //     'code',
+      //     'close_price',
+      //     'ycp',
+      //     'pe_1',
+      //     'pe_2',
+      //     'pe_3',
+      //     'pe_4',
+      //     'pe_5',
+      //     'pe_6',
+      //   ],
+      //   ['externalId'],
+      //   {
+      //     skipUpdateIfNoValuesChanged: true,
+      //     indexPredicate: 'date > 2020-01-01',
+      //   },
+      // );
+      // .orUpdate([
+      //   'close_price',
+      //   'ycp',
+      //   'pe_1',
+      //   'pe_2',
+      //   'pe_3',
+      //   'pe_4',
+      //   'pe_5',
+      //   'pe_6',
+      //   'date',
+      // ]);
 
       await queryBuilder.execute();
 

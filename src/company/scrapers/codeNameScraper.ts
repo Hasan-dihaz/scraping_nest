@@ -19,7 +19,7 @@ export default class PageService {
     console.log(`Navigating to ${this.url}...`);
     // Navigate to the selected page
     await page.goto(this.url);
-    const scrapedData = [];
+    // const scrapedData = [];
     // Wait for the required DOM to be rendered
     const scrapeCurrentPage = async () => {
       await page.waitForSelector('.content');
@@ -43,15 +43,13 @@ export default class PageService {
                 Name: el.nextElementSibling.textContent.replace(/[\(\)]/gm, ''),
               };
             });
-            // console.log("company_code_name ...1", company_code_name);
             return company_code_name;
           },
         );
         if (id == 90) {
-          console.log('Code Done');
+          console.log('Code Scraping Done');
         }
         companies.push(...company_code_name);
-        // console.log("urls", urls);
       }
       // console.log("companies", companies);
 
@@ -71,55 +69,26 @@ export default class PageService {
           await newPage.goto(link);
           // await newPage.waitForSelector('h2.BodyHead.topBodyHead');
           dataObj['code'] = code;
-          console.log('Code : ', code);
+          // console.log('Code : ', code);
 
           dataObj['name'] = await newPage.$eval(
             'div#section-to-print > h2 > i',
             (text) => text.textContent,
           );
 
-          // dataObj['bookPrice'] = await newPage.$$eval(
-          //   'table#company',
-          //   async (text) => {
-          //     console.log('text', text[1]);
-          //     const element = Array.from(text[1]);
-          //     element.map((i) => {
-          //       console.log('item...', i);
-          //     });
-
-          //     console.log('text....1', element);
-          //   },
-          // );
-          // =========================
-
-          // dataObj['Market Capitalization (mn)'] = await newPage.$$eval(
-          //   'table#company',
-          //   async (table) => {
-          //     const element =
-          //       table[1].querySelector('tbody > tr').nextElementSibling
-          //         .nextElementSibling.nextElementSibling.nextElementSibling
-          //         .nextElementSibling.nextElementSibling;
-
-          //     return element.querySelector('td').nextElementSibling
-          //       .nextElementSibling.textContent;
-          //   },
-          // );
-
-          //!===============
-
           dataObj['last_agm'] = await newPage.$eval(
             'div.col-sm-6.pull-left > i',
             (text) => text.textContent,
           );
 
-          console.log("last_agm'"); //!..............................................
+          // console.log("last_agm'"); //!..............................................
           try {
             dataObj = await newPage.$$eval(
               'table#company',
               async (table, obj) => {
                 //---------------table-1-Market Information---------------
 
-                console.log('market'); //!.............................
+                // console.log('market'); //!.............................
                 let baseElement =
                   table[1].querySelector('tbody > tr').nextElementSibling
                     .nextElementSibling.nextElementSibling.nextElementSibling
@@ -130,7 +99,7 @@ export default class PageService {
                     'td',
                   ).nextElementSibling.nextElementSibling.textContent;
 
-                console.log('market_capitalization_mn'); //!.............................
+                // console.log('market_capitalization_mn'); //!.............................
 
                 //---------------table-2-Basic Information---------------
 
@@ -153,7 +122,7 @@ export default class PageService {
                   baseElement.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
                     'td',
                   ).textContent;
-                console.log('total_outstanding_share'); //!.............................
+                // console.log('total_outstanding_share'); //!.............................
 
                 obj['face_par_value'] =
                   baseElement.nextElementSibling.nextElementSibling.querySelector(
@@ -177,23 +146,19 @@ export default class PageService {
                     'td',
                   ).textContent;
 
-                console.log('bonus_issued_stock_dividend'); //!.............................
+                // console.log('bonus_issued_stock_dividend'); //!.............................
                 //---------------table-6-Price Earnings (P/E) Ratio Based on latest Audited Financial Statements---------------
 
                 baseElement = table[6]
                   .querySelector('tbody > tr')
                   .nextElementSibling.querySelector('td');
-                // console.log(
-                //   'baseElement_______pe',
-                //   baseElement.nextElementSibling,
-                // ); //!'''''''''''''''''''''''''''''' Working Here'''''''''''''''''''''''''
 
                 let round = 0;
                 const row = (base_element) => {
                   round++;
                   const year_row = base_element;
                   if (year_row.nextElementSibling !== null) {
-                    row(year_row.nextElementSibling);
+                    row(year_row.nextElementSibling); //!-----------> Recursive Call
                   } else {
                     if (round > 1) {
                       obj['pe'] = year_row.textContent;
@@ -205,26 +170,13 @@ export default class PageService {
                   }
                 };
 
-                row(baseElement);
-
-                // obj['pe'] =
-                //   baseElement.nextElementSibling.querySelector(
-                //     'td',
-                //   ).nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling;
-                // console.log('pe'); //!.............................
-
-                //!'''''''''''''''''''''''''''''' Working Here'''''''''''''
+                row(baseElement); //!-----------> Function Call
 
                 //---------------table-7-Price Earnings (P/E) Ratio Based on latest Audited Financial Statements---------------
 
                 baseElement =
                   table[7].querySelector('tbody > tr').nextElementSibling
                     .nextElementSibling;
-                // obj['eps'] =
-                //   baseElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
-                //     'td',
-                //   ).nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.textContent;
-
                 //!===================================
                 let round_1 = 0;
                 const row_year = (base_element) => {
@@ -236,7 +188,7 @@ export default class PageService {
                       year_row.querySelector('td'),
                     );
 
-                    row_year(year_row.nextElementSibling);
+                    row_year(year_row.nextElementSibling); //!-----------> Recursive Call
                   } else {
                     if (round_1 > 1) {
                       obj['eps'] =
@@ -251,18 +203,9 @@ export default class PageService {
                   }
                 };
 
-                row_year(baseElement);
-                // console.log('Year', year.textContent);
+                row_year(baseElement); //!-----------> Function Call
 
-                //!============================================
-
-                // obj['eps'] =
-                //   baseElement.nextElementSibling.nextElementSibling.nextElementSibling.querySelector(
-                //     'td',
-                //   ).nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.textContent;
-                //!===================================
-
-                console.log('eps'); //!.............................
+                // console.log('eps'); //!.............................
 
                 //---------------table-10-Other Information of the Company---------------
                 baseElement = table[10].querySelector('tbody > tr');
@@ -277,7 +220,7 @@ export default class PageService {
                     'td',
                   ).nextElementSibling.textContent;
 
-                console.log('category'); //!.............................
+                // console.log('category'); //!.............................
 
                 //-----------------------------Shareholding pattern--------------------------
 
@@ -317,25 +260,19 @@ export default class PageService {
                 obj['foreign'] = ShareholdingArray[7];
                 obj['_public'] = ShareholdingArray[9];
 
-                console.log('public....'); //!.............................
+                // console.log('public....'); //!.............................
                 //---------------Shareholding Pattern----------------------
 
                 //---------------------table-12-Address of the Company------------------
                 baseElement = table[12].querySelector('tbody > tr');
 
-                // console.log(
-                //   'baseElement___addressArray',
-                //   baseElement.querySelector('td').nextElementSibling
-                //     .nextElementSibling,
-                // );
-
                 const addressArray = baseElement.textContent.trim().split('\n');
-                console.log('addressArray', addressArray.length); //!.............................
+                // console.log('addressArray', addressArray.length); //!.............................
 
                 if (addressArray.length > 2) {
                   obj['address'] = addressArray[2].replace(/\s+/g, ' ');
 
-                  console.log('address'); //!.............................
+                  // console.log('address'); //!.............................
 
                   obj['phone'] =
                     baseElement.nextElementSibling.nextElementSibling.querySelector(
@@ -361,32 +298,16 @@ export default class PageService {
             console.log('error........!!!');
           }
 
-          const date = new Date();
-          // dataObj['date'] = date;
-
-          console.log('date', date);
-
-          //!==============
-
           resolve(dataObj);
           await newPage.close();
         });
 
-      // const compa = ['AAMRANET', 'AAMRATECH', 'ACMEPL'];
-      const com = ['ACMEPL', 'AGRANINS', 'SJIBLPBOND', 'AAMRANET']; //TB10Y0126 TB10Y0126
-
-      // compa.map(async(comp)=>{
-      // 	// console.log("code", comp.Code);
-      // 	let currentPageData = await pagePromise(comp);
-      // 	scrapedData.push(currentPageData);
-      // 	console.log(currentPageData);
-      // })
+      // const com = ['ACMEPL', 'AGRANINS', 'SJIBLPBOND', 'AAMRANET']; //TB10Y0126 TB10Y0126
 
       for (link in companies) {
         // for (link in com) {
         // let currentPageData: CreateCompanyDto = {};
         let currentPageData = new CreateCompanyDto();
-
         const regex = /TB[0-9]+Y[0-9]+/i;
         const is_true = regex.test(companies[link].Code);
         // const is_true = regex.test(com[link]);
@@ -395,24 +316,22 @@ export default class PageService {
         }
         currentPageData = await pagePromise(companies[link].Code);
         // currentPageData = await pagePromise(com[link]);
-        // =============================================
-
-        // const result = await this.companyService.createCompany(currentPageData); // inserting into the database.
+        //! ============================================= Database Insertion====================
         const result = await this.companyService.upsertCompanyEntity(
           currentPageData,
         ); // inserting into the database.
+        //! ============================================= Database Insertion====================
 
-        console.log('result', result);
-        console.log('Count', this.count);
+        // console.log('result', result);
+        // console.log('Count', this.count);
 
         // =============================================
-        scrapedData.push(currentPageData);
-        // console.log(currentPageData);
+        // scrapedData.push(currentPageData);
       }
     };
     const data = await scrapeCurrentPage();
     // console.log('data...', data);
-    return data;
+    // return data;
     // },
   }
 }

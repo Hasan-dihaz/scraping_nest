@@ -20,7 +20,18 @@ export default class CircuitBreakerScraper {
     // Wait for the required DOM to be rendered
     const scrapeCurrentPage = async () => {
       await page.waitForSelector('.content');
-      let circuit_breaker: CreateCircuitBreakerDto[];
+      let circuit_breaker: CreateCircuitBreakerDto[] = [
+        {
+          code: ' ',
+          breaker: ' ',
+          tickSize: ' ',
+          openAdjPrice: ' ',
+          floorPrice: ' ',
+          lowerLimit: ' ',
+          upperLimit: ' ',
+          floorPriceBlockMakret: ' ',
+        },
+      ];
       circuit_breaker = await page.$$eval(
         'table.table.table-bordered.background-white.text-center > tbody >tr',
         async (text) => {
@@ -66,7 +77,7 @@ export default class CircuitBreakerScraper {
     };
     const data = await scrapeCurrentPage();
     //console.log('data...', data);
-    return data;
+    // return data;
   }
   // };
 }

@@ -1,6 +1,5 @@
 import CircuitBreakerScraper from '../scrapers/circuitBreakerScrapper';
 import { Injectable, Inject } from '@nestjs/common';
-// @Controller()
 @Injectable()
 export default class CircuitBreakerController {
   constructor(
@@ -18,5 +17,3 @@ export default class CircuitBreakerController {
     }
   }
 }
-
-// module.exports = (browserInstance) => scrapeAll(browserInstance);

@@ -1,6 +1,6 @@
 import PeScraper from '../scrapers/peScrapar';
 import { Injectable, Inject } from '@nestjs/common';
-// @Controller()
+
 @Injectable()
 export default class PeController {
   constructor(@Inject(PeScraper) private readonly peScraper: PeScraper) {}
@@ -15,5 +15,3 @@ export default class PeController {
     }
   }
 }
-
-// module.exports = (browserInstance) => scrapeAll(browserInstance);

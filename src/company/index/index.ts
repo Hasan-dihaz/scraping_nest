@@ -21,8 +21,8 @@ export default class IndexProvider {
     const browserInstance = this.browserObject.startBrowser();
 
     // Pass the browser instance to the scraper controller
-    this.scraperController.scrapeAll(browserInstance);
+    // this.scraperController.scrapeAll(browserInstance);
     this.peController.scrapeAll(browserInstance);
-    this.circuitBreakerController.scrapeAll(browserInstance);
+    // this.circuitBreakerController.scrapeAll(browserInstance);
   }
 }
