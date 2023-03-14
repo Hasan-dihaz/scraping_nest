@@ -52,36 +52,36 @@ export class PeService {
         .createQueryBuilder()
         .insert()
         .into(PE)
-        .values(pe);
-      // .orUpdate(
-      //   [
-      //     'code',
-      //     'close_price',
-      //     'ycp',
-      //     'pe_1',
-      //     'pe_2',
-      //     'pe_3',
-      //     'pe_4',
-      //     'pe_5',
-      //     'pe_6',
-      //   ],
-      //   ['externalId'],
-      //   {
-      //     skipUpdateIfNoValuesChanged: true,
-      //     indexPredicate: 'date > 2020-01-01',
-      //   },
-      // );
-      // .orUpdate([
-      //   'close_price',
-      //   'ycp',
-      //   'pe_1',
-      //   'pe_2',
-      //   'pe_3',
-      //   'pe_4',
-      //   'pe_5',
-      //   'pe_6',
-      //   'date',
-      // ]);
+        .values(pe)
+        .orUpdate(
+          [
+            'close_price',
+            'ycp',
+            'pe_1',
+            'pe_2',
+            'pe_3',
+            'pe_4',
+            'pe_5',
+            'pe_6',
+            'updated_at',
+          ],
+          // [
+          //   // 'code',
+          //   // 'close_price',
+          //   // 'ycp',
+          //   // 'pe_1',
+          //   // 'pe_2',
+          //   // 'pe_3',
+          //   // 'pe_4',
+          //   // 'pe_5',
+          //   // 'pe_6',
+          //   // 'created_at',
+          // ],
+          // {
+          //   skipUpdateIfNoValuesChanged: true,
+          //   // indexPredicate: 'date > 2020-01-01',
+          // },
+        );
 
       await queryBuilder.execute();
 

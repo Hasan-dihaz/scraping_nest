@@ -3,6 +3,7 @@ import {
   Column,
   // PrimaryGeneratedColumn,
   PrimaryColumn,
+  BeforeInsert,
   // CreateDateColumn,
 } from 'typeorm';
 
@@ -16,6 +17,7 @@ export class PE {
   close_price: string;
 
   @Column()
+  // @PrimaryColumn()
   ycp: string;
 
   @Column({ nullable: true })
@@ -39,11 +41,17 @@ export class PE {
   // @Column({ type: 'date' })   // all types are working here
   // @CreateDateColumn()
 
-  // @Column({ type: 'date' })
-  // // @PrimaryColumn()
-  // created_at: Date;
+  @Column({ primary: true, type: 'date' })
+  // @PrimaryColumn({ type: 'date' })
+  created_at: Date;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  @PrimaryColumn()
+  // @PrimaryColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
+
+  @BeforeInsert()
+  setPrimaryKey() {
+    // this.created_at = new Date().toISOString().split('T')[0];
+    this.created_at = new Date();
+  }
 }

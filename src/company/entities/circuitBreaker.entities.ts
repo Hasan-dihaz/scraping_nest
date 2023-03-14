@@ -3,12 +3,12 @@ import {
   Column,
   // PrimaryGeneratedColumn,
   PrimaryColumn,
+  BeforeInsert,
   // CreateDateColumn,
 } from 'typeorm';
 
 @Entity()
 export class CircuitBreaker {
-  @Column()
   @PrimaryColumn()
   code: string;
 
@@ -33,8 +33,16 @@ export class CircuitBreaker {
   @Column()
   floorPriceBlockMakret: string;
 
-  // @Column({ type: 'date' })   // all types are working here
-  // @CreateDateColumn()
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  date: Date;
+  // @Column({ primary: true, type: 'date' })
+  // // @PrimaryColumn({ type: 'date' })
+  // created_at: Date;
+
+  @Column({ primary: true, type: 'timestamp' })
+  // @PrimaryColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  updated_at: Date;
+
+  @BeforeInsert()
+  setPrimaryKey() {
+    this.updated_at = new Date();
+  }
 }

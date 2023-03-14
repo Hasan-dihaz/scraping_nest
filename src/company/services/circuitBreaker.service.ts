@@ -49,16 +49,33 @@ export class CircuitBreakerService {
         .insert()
         .into(CircuitBreaker)
         .values(circuitBreaker)
-        .orUpdate([
-          'breaker',
-          'tickSize',
-          'openAdjPrice',
-          'floorPrice',
-          'lowerLimit',
-          'upperLimit',
-          'floorPriceBlockMakret',
-          'date',
-        ]);
+        .orUpdate(
+          [
+            'breaker',
+            'tickSize',
+            'openAdjPrice',
+            'floorPrice',
+            'lowerLimit',
+            'upperLimit',
+            'floorPriceBlockMakret',
+            'updated_at',
+          ],
+          // ['externalId'],
+          // {
+          //   skipUpdateIfNoValuesChanged: true,
+          //   // indexPredicate: 'date > 2020-01-01',
+          // },
+        );
+      // .orUpdate([
+      //   'breaker',
+      //   'tickSize',
+      //   'openAdjPrice',
+      //   'floorPrice',
+      //   'lowerLimit',
+      //   'upperLimit',
+      //   'floorPriceBlockMakret',
+      //   // 'updated_at',
+      // ]);
       await queryBuilder.execute();
     }
   }

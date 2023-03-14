@@ -8,8 +8,8 @@ export default class startBrowserClass {
     try {
       console.log('Opening the browser......');
       browser = await puppeteer.launch({
-        headless: false,
-        // headless: true,
+        // headless: false,
+        headless: true,
         args: ['--disable-setuid-sandbox'],
         ignoreHTTPSErrors: true,
       });
